@@ -1,35 +1,62 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./index.css";
+import { motion, Variants } from "framer-motion";
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+interface DrawVariants extends Variants {
+  hidden: {
+    pathLength: number;
+    opacity: number;
+  };
+  visible: (i: number) => {
+    pathLength: number;
+    opacity: number;
+    transition: {
+      pathLength: {
+        delay: number;
+        type: string;
+        duration: number;
+        bounce: number;
+      };
+      opacity: {
+        delay: number;
+        duration: number;
+      };
+    };
+  };
 }
 
-export default App
+const draw: DrawVariants = {
+  hidden: { pathLength: 0, opacity: 0 },
+  visible: (i: number) => {
+    const delay = 1 + i * 0.5;
+    return {
+      pathLength: 1,
+      opacity: 1,
+      transition: {
+        pathLength: { delay, type: "spring", duration: 1.5, bounce: 0 },
+        opacity: { delay, duration: 0.01 },
+      },
+    };
+  },
+};
+
+export default function App() {
+  return (
+    <motion.svg width="600" height="600" viewBox="0 0 600 600" initial="hidden" animate="visible">
+      <motion.circle cx="100" cy="100" r="80" stroke="#ff0055" variants={draw} custom={1} />
+      <motion.line x1="220" y1="30" x2="360" y2="170" stroke="#00cc88" variants={draw} custom={2} />
+      <motion.line x1="220" y1="170" x2="360" y2="30" stroke="#00cc88" variants={draw} custom={2.5} />
+
+      <motion.rect width="140" height="140" x="410" y="30" rx="20" stroke="#0099ff" variants={draw} custom={3} />
+      <motion.circle cx="100" cy="300" r="80" stroke="#0099ff" variants={draw} custom={2} />
+      <motion.line x1="220" y1="230" x2="360" y2="370" stroke="#ff0055" custom={3} variants={draw} />
+
+      <motion.line x1="220" y1="370" x2="360" y2="230" stroke="#ff0055" custom={3.5} variants={draw} />
+      <motion.rect width="140" height="140" x="410" y="230" rx="20" stroke="#00cc88" custom={4} variants={draw} />
+      <motion.circle cx="100" cy="500" r="80" stroke="#00cc88" variants={draw} custom={3} />
+      
+      <motion.line x1="220" y1="430" x2="360" y2="570" stroke="#0099ff" variants={draw} custom={4} />
+      <motion.line x1="220" y1="570" x2="360" y2="430" stroke="#0099ff" variants={draw} custom={4.5} />
+      <motion.rect width="140" height="140" x="410" y="430" rx="20" stroke="#ff0055" variants={draw} custom={5} />
+    </motion.svg>
+  );
+}
